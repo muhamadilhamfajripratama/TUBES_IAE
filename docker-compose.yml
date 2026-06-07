@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # 1. User Service
+  user-service:
+    build: ./user-service
+    container_name: hrrs_user_service
+    ports:
+      - "4001:4001"
+    volumes:
+      - ./user-service:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  # 2. Vacancy Service
+  vacancy-service:
+    build: ./vacancy-service
+    container_name: hrrs_vacancy_service
+    ports:
+      - "4002:4002"
+    volumes:
+      - ./vacancy-service:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  # 3. Applicant Service
+  applicant-service:
+    build: ./applicant-service
+    container_name: hrrs_applicant_service
+    ports:
+      - "4003:4003"
+    volumes:
+      - ./applicant-service:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  # 4. Interview Service
+  interview-service:
+    build: ./interview-service
+    container_name: hrrs_interview_service
+    ports:
+      - "4004:4004"
+    volumes:
+      - ./interview-service:/app
+      - /app/node_modules
+    restart: unless-stopped

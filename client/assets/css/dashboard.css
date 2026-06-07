@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary-blue: #4f46e5;
+    --accent-teal: #10b981;
+    --accent-orange: #f59e0b;
+    --accent-purple: #8b5cf6;
+    --text-muted: #64748b;
+    --bg-light: #f8fafc;
+    --border-color: #e2e8f0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+body { background-color: var(--bg-light); display: flex; min-height: 100vh; color: #334155; }
+
+/* Sidebar */
+.sidebar { width: 260px; background-color: #1e1b4b; color: white; position: fixed; height: 100vh; display: flex; flex-direction: column; padding: 25px 20px; z-index: 100;}
+.sidebar .logo { display: flex; align-items: center; gap: 15px; font-size: 22px; font-weight: 700; margin-bottom: 40px; }
+.sidebar .logo-icon { color: #818cf8; font-size: 28px; }
+.sidebar .dot { color: #818cf8; }
+.menu { list-style: none; flex: 1; }
+.menu li { padding: 12px 15px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 15px; color: #94a3b8; font-weight: 500; transition: 0.2s; }
+.menu li:hover, .menu li.active { background-color: rgba(255, 255, 255, 0.1); color: white; }
+.sidebar-footer { padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+.system-status { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #94a3b8; }
+.indicator.online { width: 10px; height: 10px; border-radius: 50%; background-color: var(--accent-teal); box-shadow: 0 0 10px var(--accent-teal); }
+
+/* Main Content Area */
+.content { margin-left: 260px; width: calc(100% - 260px); padding: 30px 40px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.search-bar { background: white; padding: 10px 20px; border-radius: 20px; display: flex; align-items: center; gap: 10px; width: 400px; border: 1px solid var(--border-color); }
+.search-bar input { border: none; outline: none; width: 100%; }
+.profile-area { display: flex; align-items: center; gap: 20px; }
+.profile { display: flex; align-items: center; gap: 15px; }
+.profile img { width: 40px; height: 40px; border-radius: 50%; }
+.profile-info { display: flex; flex-direction: column; }
+.profile-info .name { font-weight: 600; font-size: 14px; }
+.profile-info .role { font-size: 12px; color: var(--text-muted); }
+
+/* Headers & Buttons */
+.page-header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
+.btn-primary { background-color: var(--primary-blue); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+.btn-primary:hover { opacity: 0.9; }
+
+/* Containers & Forms */
+.table-container { background: white; padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 25px; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: #475569; }
+.form-group input, .form-group select { width: 100%; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 8px; outline: none; transition: border 0.2s; }
+.form-group input:focus, .form-group select:focus { border-color: var(--primary-blue); }
+
+/* Table Styling */
+.data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.data-table th, .data-table td { text-align: left; padding: 15px; border-bottom: 1px solid var(--border-color); }
+.data-table th { background-color: var(--bg-light); color: var(--text-muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+.data-table tr:hover { background-color: var(--bg-light); }
+.badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.badge-active { background-color: #d1fae5; color: #059669; }
+
+/* Action Buttons */
+.action-btn { background: none; border: none; cursor: pointer; padding: 5px 10px; color: var(--text-muted); transition: 0.2s; font-size: 15px; }
+.action-btn:hover { color: var(--primary-blue); }
+.action-btn.delete:hover { color: #ef4444; }
+
+/* --- Khusus Halaman Auth (Login & Register) --- */
+.auth-body { display: flex; justify-content: center; align-items: center; background-color: #f0f4f8; }
+.auth-container { display: flex; background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); overflow: hidden; width: 900px; max-width: 95%; min-height: 500px; }
+.auth-banner { flex: 1; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); color: white; padding: 50px; display: flex; flex-direction: column; justify-content: center; }
+.auth-banner h2 { font-size: 32px; margin-bottom: 15px; }
+.auth-banner p { font-size: 15px; line-height: 1.6; opacity: 0.9; }
+.auth-form-area { flex: 1; padding: 50px; display: flex; flex-direction: column; justify-content: center; }
+.auth-form-area h3 { font-size: 24px; margin-bottom: 5px; color: #1e293b; }
+.auth-form-area p { color: var(--text-muted); margin-bottom: 30px; font-size: 14px; }
+.auth-link { color: var(--primary-blue); text-decoration: none; font-weight: 600; }
+.auth-link:hover { text-decoration: underline; }
+
+/* --- Modal Pop-up Styling --- */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+.modal-overlay.active { display: flex; }
+.modal-content { background: white; width: 500px; max-width: 90%; border-radius: 16px; padding: 30px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); position: relative; transform: translateY(-20px); animation: modalFadeIn 0.3s forwards; }
+@keyframes modalFadeIn { to { transform: translateY(0); opacity: 1; } }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+.modal-header h3 { color: #1e293b; font-size: 20px; }
+.close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); }
+.close-btn:hover { color: #ef4444; }
+
+/* Tab Content Hidden by Default */
+.tab-content { display: none; animation: fadeIn 0.4s ease; }
+.tab-content.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

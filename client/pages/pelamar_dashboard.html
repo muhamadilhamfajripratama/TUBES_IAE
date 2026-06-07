@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicant Portal - HRRS</title>
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-layer-group"></i></div>
+            <h2>HRRS<span class="dot">.</span></h2>
+        </div>
+        <ul class="menu">
+            <li class="active" onclick="window.location.href='pelamar_dashboard.html'"><i class="fa-solid fa-briefcase"></i> Available Vacancies</li>
+            <li onclick="window.location.href='pelamar_applications.html'"><i class="fa-solid fa-file-signature"></i> My Applications</li>
+            <li onclick="window.location.href='pelamar_interviews.html'"><i class="fa-solid fa-comments"></i> My Interviews</li>
+            <li onclick="handleLogout()" style="margin-top: 50px; color: #ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Logout</li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="system-status"><div class="indicator online"></div><span>System Online</span></div>
+        </div>
+    </nav>
+
+    <main class="content">
+        <header class="topbar">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search for jobs...">
+            </div>
+            <div class="profile-area">
+                <div class="profile">
+                    <img src="https://ui-avatars.com/api/?name=User&background=E2E8F0&color=333" alt="Applicant">
+                    <div class="profile-info">
+                        <span class="name" id="profileName">Loading...</span> 
+                        <span class="role">Applicant</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-header">
+            <div>
+                <h1 style="font-size: 28px; margin-bottom: 5px;">Available Vacancies</h1>
+                <p style="color: var(--text-muted); font-size: 15px;">Find and apply for your dream job.</p>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="availableJobsBody">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="applyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalJobTitle">Apply for: Job Title</h3>
+                <button class="close-modal" onclick="closeApplyModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="applicationForm" onsubmit="submitApplication(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="applyName" required readonly style="background: var(--bg-light);">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="applyPhone" placeholder="e.g. 081234567890" required>
+                </div>
+                <div class="form-group">
+                    <label>LinkedIn Profile URL (Optional)</label>
+                    <input type="url" id="applyLinkedIn" placeholder="https://linkedin.com/in/username">
+                </div>
+                <div class="form-group">
+                    <label>Upload Resume/CV (PDF Only)</label>
+                    <div class="file-upload-wrapper" onclick="document.getElementById('applyCV').click()">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: var(--primary-blue); margin-bottom: 10px;"></i>
+
+                    <p style="font-size: 14px; color: var(--text-muted);">
+                        Click to browse files or drag and drop
+                    </p>
+
+                    <small id="fileInfo"
+                        style="display:block;margin-top:8px;color:#64748b;font-size:12px;">
+                    </small>
+
+                    <input type="file" id="applyCV" accept=".pdf" style="display: none;" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" id="submitApplyBtn" style="width: 100%; margin-top: 10px;">Submit Application</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/pelamar.js"></script>
+</body>
+</html>

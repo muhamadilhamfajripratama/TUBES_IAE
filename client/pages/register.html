@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - HRRS</title>
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-banner" style="background: linear-gradient(135deg, #00B5D8 0%, #0369a1 100%);">
+            <div class="logo-icon" style="background: white; color: var(--accent-teal); width: max-content; margin-bottom: 20px; padding: 10px; border-radius: 10px;"><i class="fa-solid fa-layer-group"></i></div>
+            <h2>Join HRRS.</h2>
+            <p>Create an account to start applying for open vacancies and track your interview schedules.</p>
+        </div>
+        
+        <div class="auth-form-area">
+            <h3>Create Account</h3>
+            <p>Fill in the details below to register.</p>
+            
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="regName" placeholder="e.g. John Doe">
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="regEmail" placeholder="john@example.com">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="regRole">
+                    <option value="Pelamar">Pelamar (Applicant)</option>
+                    <option value="HR">HR Administrator</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label>Password</label>
+                <input type="password" id="regPassword" placeholder="••••••••">
+            </div>
+            
+            <button class="btn-primary" onclick="handleRegister()" style="width: 100%; justify-content: center; background: var(--accent-teal); margin-bottom: 20px;">Sign Up</button>
+            <p style="text-align: center; margin: 0;">Already have an account? <a href="login.html" class="auth-link">Sign in</a></p>
+        </div>
+    </div>
+    
+    <script src="../js/auth.js"></script>
+</body>
+</html>

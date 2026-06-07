@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - HRRS</title>
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-banner">
+            <div class="logo-icon" style="background: white; color: var(--primary-blue); width: max-content; margin-bottom: 20px; padding: 10px; border-radius: 10px;"><i class="fa-solid fa-layer-group"></i></div>
+            <h2>Welcome Back.</h2>
+            <p>Access the HRRS Enterprise Dashboard to manage your recruitment pipeline or track your job applications.</p>
+        </div>
+        
+        <div class="auth-form-area">
+            <h3>Sign In</h3>
+            <p>Enter your email and password to continue.</p>
+            
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="loginEmail" placeholder="e.g. daffa@hrrs.com">
+            </div>
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="••••••••">
+            </div>
+            
+            <button class="btn-primary" onclick="handleLogin()" style="width: 100%; justify-content: center; margin-bottom: 20px;">Sign In</button>
+            <p style="text-align: center; margin: 0;">Don't have an account? <a href="register.html" class="auth-link">Register here</a></p>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+</body>
+</html>
