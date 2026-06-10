@@ -21,6 +21,7 @@
             <li onclick="window.location.href='interviews.html'"><i class="fa-solid fa-comments"></i> Interviews</li>
             <li onclick="window.location.href='reports.html'"><i class="fa-solid fa-chart-line"></i> Reports</li>
             <li><i class="fa-solid fa-gear"></i> Settings</li>
+            <li onclick="handleLogout()" style="margin-top: 50px; color: #ef4444; cursor: pointer;"><i class="fa-solid fa-right-from-bracket"></i> Logout</li>
         </ul>
         <div class="sidebar-footer">
             <div class="system-status"><div class="indicator online"></div><span>System Online</span></div>
@@ -30,7 +31,7 @@
     <main class="content">
         <header class="topbar">
             <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Search applicants..."></div>
-            <div class="profile-area">
+            <div class="profile-area" onclick="window.location.href='profile.html'" style="cursor: pointer;">
                 <div class="profile">
                     <img src="https://ui-avatars.com/api/?name=HR+Admin&background=0D8ABC&color=fff" alt="Admin">
                     <div class="profile-info"><span class="name">HR Administrator</span><span class="role">Enterprise Admin</span></div>
@@ -63,11 +64,12 @@
         <div class="table-container">
             <h3 style="margin-bottom: 15px; color: #1e293b;">Data Pelamar (Applicant DB)</h3>
             <table class="data-table">
-                <thead><tr><th>Apply ID</th><th>User ID</th><th>Vacancy ID</th><th>Status</th></tr></thead>
+                <thead><tr><th>Apply ID</th><th>Nama Pelamar</th><th>Posisi Lowongan</th><th>Dokumen CV</th><th>Tahapan Administrasi</th><th>Status</th></tr></thead>
                 <tbody id="applicantsTableBody"></tbody>
             </table>
         </div>
     </main>
+    <script src="../js/auth.js"></script>
     <script src="../js/applicant.js"></script>
 </body>
 </html>

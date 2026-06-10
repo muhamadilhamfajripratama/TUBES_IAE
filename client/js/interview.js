@@ -15,7 +15,9 @@ async function loadApplicantsDropdown() {
         getApplicants {
             id
             user_id
+            user_name
             vacancy_id
+            vacancy_title
             status
         }
     }`;
@@ -48,7 +50,7 @@ async function loadApplicantsDropdown() {
 
             select.innerHTML += `
                 <option value="${app.id}">
-                    Applicant #${app.id} (User ${app.user_id})
+                    ${app.user_name || 'User ' + app.user_id} (Apply ID #${app.id})
                 </option>
             `;
         });
@@ -73,6 +75,7 @@ async function fetchInterviewsHR() {
         getInterviews {
             id
             applicant_id
+            applicant_name
             scheduled_at
             interviewer
         }
@@ -153,7 +156,7 @@ async function fetchInterviewsHR() {
             tbody.innerHTML += `
             <tr>
                 <td>#${inv.id}</td>
-                <td>${inv.applicant_id}</td>
+                <td>${inv.applicant_name || 'Applicant #' + inv.applicant_id}</td>
                 <td>${displayDate}</td>
                 <td>${inv.interviewer}</td>
             </tr>`;

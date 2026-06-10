@@ -28,8 +28,12 @@ const userResolvers = {
       return {id: result.insertId, name, email, role};
     },
 
-    updateUser: async (_, { id, name, email, role }) => {
-      await db.query("UPDATE users SET name = ?, email = ?, role = ? WHERE id = ?",[name, email, role, id]);
+    updateUser: async (_, { id, name, email, role, password }) => {
+      if (password) {
+        await db.query("UPDATE users SET name = ?, email = ?, role = ?, password = ? WHERE id = ?",[name, email, role, password, id]);
+      } else {
+        await db.query("UPDATE users SET name = ?, email = ?, role = ? WHERE id = ?",[name, email, role, id]);
+      }
       const [rows] = await db.query("SELECT id, name, email, role FROM users WHERE id = ?",[id]);
       return rows[0];
     },

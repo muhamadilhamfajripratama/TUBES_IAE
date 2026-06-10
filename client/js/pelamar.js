@@ -53,7 +53,7 @@ async function submitApplication(event) {
     if(!userId) return window.location.href = 'login.html';
     if(!cvFile) return alert("Harap unggah CV (PDF)!");
 
-    const mutation = `mutation { applyJob(user_id: ${userId}, vacancy_id: ${selectedVacancyId}) { id } }`;
+    const mutation = `mutation { applyJob(user_id: ${userId}, vacancy_id: ${selectedVacancyId}, cv: "${cvFile.name}") { id } }`;
     try {
         const submitBtn = document.getElementById('submitApplyBtn');
         submitBtn.innerText = "Mengirim..."; submitBtn.disabled = true;

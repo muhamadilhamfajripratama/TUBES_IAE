@@ -2,6 +2,7 @@ const interviewTypeDefs = `#graphql
   type Interview {
     id: ID!
     applicant_id: Int!
+    applicant_name: String
     scheduled_at: String!
     interviewer: String!
   }

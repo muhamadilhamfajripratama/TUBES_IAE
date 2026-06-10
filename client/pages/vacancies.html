@@ -61,6 +61,10 @@
                 Settings
             </li>
 
+            <li onclick="handleLogout()" style="margin-top: 50px; color: #ef4444; cursor: pointer;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </li>
         </ul>
 
         <div class="sidebar-footer">
@@ -78,10 +82,13 @@
 
             <div class="search-bar">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Search vacancies...">
+                <input
+                    type="text"
+                    placeholder="Search vacancies..."
+                >
             </div>
 
-            <div class="profile-area">
+            <div class="profile-area" onclick="window.location.href='profile.html'" style="cursor: pointer;">
 
                 <div class="profile">
 
@@ -121,8 +128,6 @@
             </div>
 
         </div>
-
-        <!-- CREATE VACANCY -->
 
         <div
             class="table-container"
@@ -184,12 +189,34 @@
 
                 <div class="form-group">
 
+                    <label>Start Apply</label>
+
+                    <input
+                        type="date"
+                        id="vacStartApply"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>End Date Apply</label>
+
+                    <input
+                        type="date"
+                        id="vacEndApply"
+                    >
+
+                </div>
+
+                <div class="form-group" style="grid-column: 1 / -1;">
+
                     <label>Description</label>
 
                     <textarea
                         id="vacDescription"
                         rows="4"
-                        placeholder="Job description..."
+                        placeholder="Enter vacancy description..."
                     ></textarea>
 
                 </div>
@@ -200,8 +227,13 @@
 
                     <select id="vacStatus">
 
-                        <option value="Open">Open</option>
-                        <option value="Closed">Closed</option>
+                        <option value="Open">
+                            Open
+                        </option>
+
+                        <option value="Closed">
+                            Closed
+                        </option>
 
                     </select>
 
@@ -222,8 +254,6 @@
 
         </div>
 
-        <!-- TABLE -->
-
         <div class="table-container">
 
             <h3
@@ -237,20 +267,19 @@
 
             <table class="data-table">
 
-                <thead>
-
-                    <tr>
-
-                        <th>ID</th>
-                        <th>Job Title</th>
-                        <th>Department</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th>Action</th>
-
-                    </tr>
-
-                </thead>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Job Title</th>
+                    <th>Department</th>
+                    <th>Description</th>
+                    <th>Start Apply</th>
+                    <th>End Apply</th>
+                    <th>Created At</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
 
                 <tbody id="vacanciesTableBody">
 
@@ -262,15 +291,19 @@
 
     </main>
 
-    <!-- EDIT MODAL -->
-
     <div
         class="modal-overlay"
         id="editVacancyModal"
         style="display:none;"
     >
 
-        <div class="modal-content">
+        <div
+            class="modal-content"
+            style="
+                width:700px;
+                max-width:95%;
+            "
+        >
 
             <div class="modal-header">
 
@@ -305,11 +338,30 @@
 
                 <label>Department</label>
 
-                <input
-                    type="text"
-                    id="editVacDept"
-                >
+                <select id="editVacDept">
 
+                    <option value="IT & Engineering">IT & Engineering</option>
+                    <option value="Data Analyst">Data Analyst</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Data Mining">Data Mining</option>
+                    <option value="Business Development">Business Development</option>
+                    <option value="Database Engineering">Database Engineering</option>
+                    <option value="Programmer Fullstack">Programmer Fullstack</option>
+
+                </select>
+
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>Start Apply</label>
+                    <input type="date" id="editVacStartApply">
+                </div>
+
+                <div class="form-group">
+                    <label>End Date Apply</label>
+                    <input type="date" id="editVacEndApply">
+                </div>
             </div>
 
             <div class="form-group">
@@ -318,6 +370,7 @@
 
                 <textarea
                     id="editVacDescription"
+                    rows="5"
                 ></textarea>
 
             </div>
@@ -328,8 +381,13 @@
 
                 <select id="editVacStatus">
 
-                    <option value="Open">Open</option>
-                    <option value="Closed">Closed</option>
+                    <option value="Open">
+                        Open
+                    </option>
+
+                    <option value="Closed">
+                        Closed
+                    </option>
 
                 </select>
 
@@ -346,6 +404,7 @@
 
     </div>
 
+    <script src="../js/auth.js"></script>
     <script src="../js/vacancy.js"></script>
 
 </body>

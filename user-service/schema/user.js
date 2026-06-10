@@ -15,7 +15,7 @@ const userTypeDefs = `#graphql
 
   type Mutation {
     createUser(name: String!, email: String!, role: String!, password: String!): User
-    updateUser(id: ID!, name: String, email: String, role: String): User
+    updateUser(id: ID!, name: String, email: String, role: String, password: String): User
     deleteUser(id: ID!): String
   }
 `;

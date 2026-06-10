@@ -3,6 +3,10 @@ const applicantTypeDefs = `#graphql
     id: ID!
     user_id: Int!
     vacancy_id: Int!
+    user_name: String
+    vacancy_title: String
+    cv: String
+    administrasi_status: String
     status: String!
   }
 
@@ -14,8 +18,9 @@ const applicantTypeDefs = `#graphql
   }
 
   type Mutation {
-    applyJob(user_id: Int!, vacancy_id: Int!): Applicant
+    applyJob(user_id: Int!, vacancy_id: Int!, cv: String): Applicant
     updateApplicantStatus(id: ID!, status: String!): Applicant # Untuk HR saat mengubah status Screening/Interview
+    updateAdministrasiStatus(id: ID!, status: String!): Applicant
     deleteApplicant(id: ID!): String
 
   }
