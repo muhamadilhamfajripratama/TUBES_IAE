@@ -1,5 +1,5 @@
 // client/js/user.js
-const USER_API = "http://localhost:4001/";
+// USER_API already declared in auth.js
 
 async function fetchUsers() {
     const query = `{ getUsers { id, name, email, role } }`;

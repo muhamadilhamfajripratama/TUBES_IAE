@@ -21,6 +21,7 @@ async function handleLogin() {
             // Simpan data user ke Local Storage agar bisa dipakai saat melamar kerja
             localStorage.setItem('userId', validUser.id);
             localStorage.setItem('userName', validUser.name);
+            localStorage.setItem('userEmail', validUser.email);
             localStorage.setItem('userRole', validUser.role);
             
             alert(`Login Berhasil sebagai ${validUser.role}!`);
@@ -49,9 +50,26 @@ async function handleRegister() {
     const mutation = `mutation { createUser(name: "${name}", email: "${email}", role: "${role}", password: "${pwd}") { id } }`;
     
     try {
-        await fetch(USER_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: mutation }) });
-        alert("Registrasi berhasil! Silakan Sign In menggunakan akun baru Anda.");
-        window.location.href = 'login.html';
+        const res = await fetch(USER_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: mutation }) });
+        const result = await res.json();
+        
+        if (result.errors) throw new Error("Server Error");
+        
+        const newUserId = result.data.createUser.id;
+        
+        // Auto-login after register
+        localStorage.setItem('userId', newUserId);
+        localStorage.setItem('userName', name);
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userRole', role);
+
+        alert("Registrasi berhasil! Anda akan langsung masuk ke sistem.");
+        
+        if (role === 'HR') {
+            window.location.href = 'dashboard.html';
+        } else {
+            window.location.href = 'pelamar_dashboard.html';
+        }
     } catch (err) {
         alert("Gagal mendaftar, periksa koneksi server.");
     }

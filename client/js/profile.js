@@ -1,4 +1,4 @@
-const USER_API = "http://localhost:4001/";
+// USER_API is already declared in auth.js, which is loaded before this script.
 
 // Retrieve session info
 const userId = localStorage.getItem("userId");
@@ -17,7 +17,9 @@ function renderSidebar() {
     const sidebar = document.getElementById("dynamicSidebar");
     if (!sidebar) return;
 
-    if (userRole === "HR") {
+    const roleCheck = userRole ? userRole.trim().toUpperCase() : "";
+
+    if (roleCheck === "HR") {
         sidebar.innerHTML = `
             <div class="logo">
                 <div class="logo-icon"><i class="fa-solid fa-layer-group"></i></div>
@@ -93,12 +95,44 @@ function toggleEditMode(isEdit) {
 }
 
 /* =====================================
+   PRELOAD PROFILE FROM LOCALSTORAGE
+===================================== */
+function preloadProfile() {
+    const name = localStorage.getItem("userName");
+    const role = localStorage.getItem("userRole");
+    const email = localStorage.getItem("userEmail");
+
+    if (name) {
+        document.getElementById("topbarName").innerText = name;
+        document.getElementById("profileCardName").innerText = name;
+        document.getElementById("profName").value = name;
+        
+        const rCheck = role ? role.trim().toUpperCase() : "";
+        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${rCheck === 'HR' ? '0D8ABC' : 'E2E8F0'}&color=${rCheck === 'HR' ? 'fff' : '333'}`;
+        document.getElementById("topbarAvatar").src = avatarUrl;
+        document.getElementById("profileCardAvatar").src = avatarUrl;
+    }
+    if (role) {
+        const rCheck = role ? role.trim().toUpperCase() : "";
+        document.getElementById("topbarRole").innerText = rCheck === 'HR' ? 'HR Administrator' : 'Applicant';
+        document.getElementById("profileCardRole").innerText = role;
+        document.getElementById("profRole").value = role;
+    }
+    if (email) {
+        document.getElementById("profEmail").value = email;
+    }
+}
+
+/* =====================================
    FETCH PROFILE DETAILS (READ)
 ===================================== */
 async function loadProfile() {
+    // Preload to prevent "Loading..." text and empty inputs
+    preloadProfile();
+
     const query = `
     {
-        getUserById(id: ${userId}) {
+        getUserById(id: "${userId}") {
             id
             name
             email
@@ -119,18 +153,24 @@ async function loadProfile() {
         const user = result.data?.getUserById;
 
         if (!user) {
-            alert("Gagal memuat profil atau sesi kedaluwarsa!");
-            handleLogout();
+            // Optional: Handle silently if we already have local data, or alert if really needed
+            console.warn("Failed to fetch fresh profile data from server.");
             return;
         }
 
         loadedUser = user;
 
-        // Update UI headers
-        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=${user.role === 'HR' ? '0D8ABC' : 'E2E8F0'}&color=${user.role === 'HR' ? 'fff' : '333'}`;
+        // Update localStorage with fresh data
+        localStorage.setItem("userName", user.name);
+        localStorage.setItem("userEmail", user.email);
+        localStorage.setItem("userRole", user.role);
+
+        // Update UI headers with fresh data
+        const rCheck = user.role ? user.role.trim().toUpperCase() : "";
+        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=${rCheck === 'HR' ? '0D8ABC' : 'E2E8F0'}&color=${rCheck === 'HR' ? 'fff' : '333'}`;
         document.getElementById("topbarAvatar").src = avatarUrl;
         document.getElementById("topbarName").innerText = user.name;
-        document.getElementById("topbarRole").innerText = user.role === 'HR' ? 'HR Administrator' : 'Applicant';
+        document.getElementById("topbarRole").innerText = rCheck === 'HR' ? 'HR Administrator' : 'Applicant';
 
         document.getElementById("profileCardAvatar").src = avatarUrl;
         document.getElementById("profileCardName").innerText = user.name;

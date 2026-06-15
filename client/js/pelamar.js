@@ -7,12 +7,24 @@ let selectedVacancyId = null;
 // --- 1. Fungsi Halaman Dashboard (Cari Lowongan) ---
 async function loadPelamarDashboard() {
     const userName = localStorage.getItem('userName') || 'Pelamar';
+    const userId = localStorage.getItem('userId');
     if(document.getElementById('profileName')) document.getElementById('profileName').innerText = userName;
 
-    const query = `{ getVacancies { id, title, department, status } }`;
+    const queryVacancies = `{ getVacancies { id, title, department, status } }`;
+    const queryApplications = `{ getApplicantsByUser(user_id: ${userId}) { vacancy_id } }`;
+
     try {
-        const res = await fetch(VACANCY_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query }) });
-        const jobs = (await res.json()).data.getVacancies;
+        const resVacancies = await fetch(VACANCY_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: queryVacancies }) });
+        const jobs = (await resVacancies.json()).data.getVacancies;
+        
+        let appliedVacancyIds = [];
+        if (userId) {
+            const resApps = await fetch(APPLICANT_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: queryApplications }) });
+            const appsData = await resApps.json();
+            if (appsData.data && appsData.data.getApplicantsByUser) {
+                appliedVacancyIds = appsData.data.getApplicantsByUser.map(app => Number(app.vacancy_id));
+            }
+        }
         
         const tbody = document.getElementById('availableJobsBody');
         if (!tbody) return; 
@@ -20,12 +32,21 @@ async function loadPelamarDashboard() {
         tbody.innerHTML = '';
         jobs.forEach(job => {
             if(job.status === 'Open' || job.status === 'Closed') {
+                const hasApplied = appliedVacancyIds.includes(Number(job.id));
+                
+                let actionButton = '';
+                if (hasApplied) {
+                    actionButton = `<button class="btn-primary" style="padding: 8px 15px; font-size: 13px; background-color: #9ca3af; cursor: not-allowed; border-color: #9ca3af;" disabled>Applied</button>`;
+                } else {
+                    actionButton = `<button class="btn-primary" style="padding: 8px 15px; font-size: 13px;" onclick="openApplyModal(${job.id}, '${job.title}')">Apply Now</button>`;
+                }
+
                 tbody.innerHTML += `<tr>
                     <td><strong>${job.title}</strong></td>
                     <td>${job.department}</td>
                     <td><span class="badge badge-active">${job.status}</span></td>
                     <td>
-                        <button class="btn-primary" style="padding: 8px 15px; font-size: 13px;" onclick="openApplyModal(${job.id}, '${job.title}')">Apply Now</button>
+                        ${actionButton}
                     </td>
                 </tr>`;
             }
@@ -54,16 +75,59 @@ async function submitApplication(event) {
     if(!cvFile) return alert("Harap unggah CV (PDF)!");
 
     const mutation = `mutation { applyJob(user_id: ${userId}, vacancy_id: ${selectedVacancyId}, cv: "${cvFile.name}") { id } }`;
+    const submitBtn = document.getElementById('submitApplyBtn');
+    
+    // 1. Loading State
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengunggah...';
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.7';
+
     try {
-        const submitBtn = document.getElementById('submitApplyBtn');
-        submitBtn.innerText = "Mengirim..."; submitBtn.disabled = true;
-        await fetch(APPLICANT_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: mutation }) });
+        // Simulasi delay jaringan (1.5 detik) agar UI loading terlihat oleh user
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        const res = await fetch(APPLICANT_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: mutation }) });
+        const result = await res.json();
         
-        alert("Berhasil! Lamaran dikirim ke HR.");
-        closeApplyModal();
-        submitBtn.innerText = "Submit Application"; submitBtn.disabled = false;
-        document.getElementById('applicationForm').reset();
-    } catch (err) { alert("Terjadi kesalahan."); }
+        if(result.errors) {
+            throw new Error(result.errors[0].message);
+        }
+        
+        // 2. Success State
+        submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> File Berhasil Diunggah';
+        submitBtn.style.backgroundColor = '#10b981'; // Warna hijau sukses
+        submitBtn.style.opacity = '1';
+        
+        // Tampilkan feedback sukses sejenak sebelum menutup modal
+        setTimeout(() => {
+            alert(`Berhasil! Dokumen "${cvFile.name}" telah dikirim ke HR.`);
+            closeApplyModal();
+            // Kembalikan tombol ke state awal
+            submitBtn.innerHTML = originalBtnText; 
+            submitBtn.disabled = false;
+            submitBtn.style.backgroundColor = ''; // Hapus inline style agar kembali ke CSS default
+            document.getElementById('applicationForm').reset();
+            const fileText = document.getElementById("fileText");
+            if (fileText) fileText.innerHTML = "Click to browse files or drag and drop";
+            
+            // Reload dashboard untuk memperbarui status tombol menjadi Applied
+            if (document.getElementById('availableJobsBody')) {
+                loadPelamarDashboard();
+            }
+        }, 800);
+        
+    } catch (err) { 
+        // 3. Error State
+        submitBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Gagal Mengunggah';
+        submitBtn.style.backgroundColor = '#ef4444'; // Warna merah error
+        setTimeout(() => {
+            alert(err.message);
+            submitBtn.innerHTML = originalBtnText; 
+            submitBtn.disabled = false;
+            submitBtn.style.backgroundColor = '';
+        }, 1000);
+    }
 }
 
 // --- 3. Fungsi Halaman My Applications ---
@@ -74,7 +138,7 @@ async function loadMyApplications() {
 
     try {
         // Ambil Data Lamaran
-        const appRes = await fetch(APPLICANT_API, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({query: `{ getApplicants { id user_id vacancy_id status } }`})});
+        const appRes = await fetch(APPLICANT_API, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({query: `{ getApplicants { id user_id vacancy_id status administrasi_status } }`})});
         const allApps = (await appRes.json()).data.getApplicants;
         const myApps = allApps.filter(a => a.user_id == userId); // Filter milik user ini saja
 
@@ -86,13 +150,30 @@ async function loadMyApplications() {
         if(!tbody) return;
         tbody.innerHTML = '';
 
-        myApps.forEach(app => {
+        myApps.forEach((app, index) => {
             const job = vacancies.find(v => v.id == app.vacancy_id);
+            
+            // Dynamic badge color for main status
+            let badgeStyle = app.status === 'Applied' 
+                ? 'background: rgba(59, 130, 246, 0.1); color: #3b82f6;' 
+                : app.status === 'Reject' 
+                    ? 'background: rgba(239, 68, 68, 0.1); color: #ef4444;'
+                    : 'background: rgba(107, 114, 128, 0.1); color: #6b7280;';
+            
+            // Dynamic badge color for administrasi status
+            let adminStatus = app.administrasi_status || 'Pending';
+            let adminBadgeStyle = adminStatus === 'Lolos' 
+                ? 'background: rgba(16, 185, 129, 0.1); color: #10b981;' 
+                : adminStatus === 'Tolak'
+                    ? 'background: rgba(239, 68, 68, 0.1); color: #ef4444;'
+                    : 'background: rgba(107, 114, 128, 0.1); color: #6b7280;';
+            
             tbody.innerHTML += `<tr>
                 <td>#APP-${app.id}</td>
                 <td><strong>${job ? job.title : 'Position Closed'}</strong></td>
                 <td>${job ? job.department : '-'}</td>
-                <td><span class="badge" style="background: rgba(255,112,67,0.1); color: var(--accent-orange);">${app.status}</span></td>
+                <td><span class="badge" style="${adminBadgeStyle}">${adminStatus}</span></td>
+                <td><span class="badge" style="${badgeStyle}">${app.status}</span></td>
             </tr>`;
         });
     } catch(err) { console.error(err); }
@@ -111,7 +192,7 @@ async function loadMyInterviews() {
         const myAppIds = myApps.map(a => Number(a.id));
 
         // 2. Ambil jadwal Interview yang Applicant ID-nya cocok
-        const intRes = await fetch(INTERVIEW_API, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({query: `{ getInterviews { id applicant_id scheduled_at interviewer } }`})});
+        const intRes = await fetch(INTERVIEW_API, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({query: `{ getInterviews { id applicant_id scheduled_at interviewer result notes } }`})});
         const myInts = (await intRes.json()).data.getInterviews.filter(i => myAppIds.includes(Number(i.applicant_id)));
 
         // 3. Ambil judul loker
@@ -126,11 +207,19 @@ async function loadMyInterviews() {
             const relatedApp = myApps.find(a => a.id == inv.applicant_id);
             const job = relatedApp ? vacancies.find(v => v.id == relatedApp.vacancy_id) : null;
 
+            let statusBadge = '<span style="padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 13px; background: rgba(59, 130, 246, 0.1); color: #3b82f6;">Scheduled</span>';
+            
+            if(inv.result === 'Lolos') {
+                statusBadge = '<span style="padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 13px; background: rgba(16, 185, 129, 0.1); color: #10b981;">Lolos Interview</span>';
+            } else if (inv.result === 'Tidak Lolos') {
+                statusBadge = '<span style="padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 13px; background: rgba(239, 68, 68, 0.1); color: #ef4444;">Tidak Lolos</span>';
+            }
+
             tbody.innerHTML += `<tr>
                 <td><strong>${job ? job.title : '-'}</strong></td>
                 <td>${inv.scheduled_at}</td>
                 <td>${inv.interviewer}</td>
-                <td><span class="badge badge-active">Scheduled</span></td>
+                <td>${statusBadge}</td>
             </tr>`;
         });
     } catch(err) { console.error(err); }
@@ -139,7 +228,11 @@ async function loadMyInterviews() {
 // Eksekusi otomatis berdasarkan halaman mana yang sedang dibuka
 window.onload = () => {
     if(document.getElementById('availableJobsBody')) loadPelamarDashboard();
-    if(document.getElementById('myApplicationsBody')) loadMyApplications();
+    if(document.getElementById('myApplicationsBody')) {
+        loadMyApplications();
+        // Polling (SWR Concept) to get real-time updates every 5 seconds
+        setInterval(loadMyApplications, 5000); 
+    }
     if(document.getElementById('myInterviewsBody')) loadMyInterviews();
 };
 

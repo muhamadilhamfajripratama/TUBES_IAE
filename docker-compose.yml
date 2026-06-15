@@ -15,6 +15,7 @@ services:
       - "3301:3306"
     volumes:
       - user_db_data:/var/lib/mysql
+      - ./user_init.sql:/docker-entrypoint-initdb.d/init.sql
 
   user-service:
     build: ./user-service
@@ -48,6 +49,7 @@ services:
       - "3302:3306"
     volumes:
       - vacancy_db_data:/var/lib/mysql
+      - ./vacancy_init.sql:/docker-entrypoint-initdb.d/init.sql
 
   vacancy-service:
     build: ./vacancy-service
@@ -81,6 +83,7 @@ services:
       - "3303:3306"
     volumes:
       - applicant_db_data:/var/lib/mysql
+      - ./applicant_init.sql:/docker-entrypoint-initdb.d/init.sql
 
   applicant-service:
     build: ./applicant-service
@@ -114,6 +117,7 @@ services:
       - "3304:3306"
     volumes:
       - interview_db_data:/var/lib/mysql
+      - ./interview_init.sql:/docker-entrypoint-initdb.d/init.sql
 
   interview-service:
     build: ./interview-service
@@ -131,6 +135,18 @@ services:
     depends_on:
       - interview-db
     restart: unless-stopped
+
+  # ==========================================
+  # 5. PHPMYADMIN (Untuk melihat isi database)
+  # ==========================================
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: hrrs_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_ARBITRARY: 1
 
 # ==========================================
 # VOLUMES DECLARATION

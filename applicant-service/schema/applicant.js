@@ -15,6 +15,7 @@ const applicantTypeDefs = `#graphql
     getApplicantById(id: ID!): Applicant
     getApplicantsByUser(user_id: Int!): [Applicant] # Berguna untuk dashboard pelamar agar hanya melihat lamarannya sendiri
     getApplicantsByStatus(status: String!): [Applicant]
+    getApplicantsByAdministrasiStatus(status: String!): [Applicant]
   }
 
   type Mutation {

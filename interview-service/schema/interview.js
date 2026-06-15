@@ -5,6 +5,8 @@ const interviewTypeDefs = `#graphql
     applicant_name: String
     scheduled_at: String!
     interviewer: String!
+    result: String
+    notes: String
   }
 
   type Query {
@@ -16,6 +18,7 @@ const interviewTypeDefs = `#graphql
   type Mutation {
     scheduleInterview(applicant_id: Int!, scheduled_at: String!, interviewer: String!): Interview
     rescheduleInterview(id: ID!, scheduled_at: String!): Interview
+    updateInterviewResult(id: ID!, result: String!, notes: String): Interview
     deleteInterview(id: ID!): String
   }
 `;

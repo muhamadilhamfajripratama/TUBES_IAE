@@ -1,5 +1,5 @@
 const APPLICANT_API = "http://localhost:4003/";
-const USER_API = "http://localhost:4001/";
+// USER_API already declared in auth.js
 const VACANCY_API = "http://localhost:4002/";
 
 /* =========================
@@ -250,7 +250,7 @@ async function fetchApplicantsHR() {
 
         tbody.innerHTML = "";
 
-        applicants.forEach(app => {
+        applicants.forEach((app, index) => {
             // Render CV column
             let cvCell = "-";
             if (app.cv) {
@@ -277,8 +277,8 @@ async function fetchApplicantsHR() {
                     </div>
                 `;
             } else {
-                let badgeStyle = adminStatus === 'Lolos' 
-                    ? 'background: rgba(16, 185, 129, 0.1); color: #10b981;' 
+                let badgeStyle = adminStatus === 'Lolos'
+                    ? 'background: rgba(16, 185, 129, 0.1); color: #10b981;'
                     : 'background: rgba(239, 68, 68, 0.1); color: #ef4444;';
                 adminCell = `
                     <span style="padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; display: inline-block; ${badgeStyle}">
@@ -288,9 +288,9 @@ async function fetchApplicantsHR() {
             }
 
             // Render original Status column (Plain text badge, no buttons)
-            let badgeStyle = app.status === 'Applied' 
-                ? 'background: rgba(59, 130, 246, 0.1); color: #3b82f6;' 
-                : app.status === 'Reject' 
+            let badgeStyle = app.status === 'Applied'
+                ? 'background: rgba(59, 130, 246, 0.1); color: #3b82f6;'
+                : app.status === 'Reject'
                     ? 'background: rgba(239, 68, 68, 0.1); color: #ef4444;'
                     : 'background: rgba(107, 114, 128, 0.1); color: #6b7280;';
             let statusCell = `
@@ -301,7 +301,7 @@ async function fetchApplicantsHR() {
 
             tbody.innerHTML += `
             <tr>
-                <td>#${app.id}</td>
+                <td>#APP-${app.id}</td>
                 <td>${app.user_name || app.user_id}</td>
                 <td>${app.vacancy_title || app.vacancy_id}</td>
                 <td>${cvCell}</td>
@@ -391,6 +391,24 @@ async function updateAdministrasiStatus(id, status) {
             console.error(result.errors);
             return alert("Gagal mengubah status administrasi");
         }
+
+        // --- NEW: Update Main Status as well ---
+        const newMainStatus = status === 'Lolos' ? 'Lolos Administrasi' : 'Reject';
+        const mainMutation = `
+        mutation {
+            updateApplicantStatus(
+                id:${id},
+                status:"${newMainStatus}"
+            ){
+                id
+            }
+        }`;
+        await fetch(APPLICANT_API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query: mainMutation })
+        });
+        // ----------------------------------------
 
         alert(`Status administrasi applicant #${id} berhasil diubah menjadi ${status}!`);
         fetchApplicantsHR();

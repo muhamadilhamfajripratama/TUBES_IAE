@@ -1,14 +1,27 @@
 const mysql = require("mysql2/promise");
 
 const pool = mysql.createPool({
-  host: "host.docker.internal",
-  user: "root",
-  password: "",
-  database: "user_db", // Arahkan ke user_db
+  host: process.env.DB_HOST || "host.docker.internal",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "tubes_user_db",
 });
 
-pool.getConnection()
-  .then(() => console.log("✅ Connected to MySQL (user_db)"))
-  .catch((err) => console.error("❌ Database connection failed:", err));
+const checkConnection = async (retries = 10, delay = 3000) => {
+  try {
+    const connection = await pool.getConnection();
+    console.log("✅ Connected to MySQL (User Service)");
+    connection.release();
+  } catch (err) {
+    if (retries > 0) {
+      console.log(`⏳ Waiting for MySQL (User Service) to be ready... (${retries} attempts left)`);
+      setTimeout(() => checkConnection(retries - 1, delay), delay);
+    } else {
+      console.error("❌ Database connection failed after multiple attempts:", err);
+    }
+  }
+};
+
+checkConnection();
 
 module.exports = pool;
